@@ -17,46 +17,50 @@
 
 /* Unix and compatible case (including macOS) */
 #if defined(WITH_STDLIB) && (defined(__unix__) || defined(__APPLE__))
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
-
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include "../words/words.h"
-
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
+//#include <limits.h>
+//
+//#include <sys/types.h>
+//#include <sys/stat.h>
+//#include <fcntl.h>
+//#include <unistd.h>
+//#include "../words/words.h"
+//
 /*
  * Copy file content to buffer. Return 0 on success, i.e. if the request
  * size has been read and copied to buffer and -1 otherwise.
  */
-static int fimport(unsigned char *buf, u16 buflen, const char *path)
-{
-	u16 rem = buflen, copied = 0;
-	ssize_t ret;
-	int fd;
-
-	fd = open(path, O_RDONLY);
-	if (fd == -1) {
-		printf("Unable to open input file %s\n", path);
-		return -1;
+static int fimport(unsigned char *buf, u16 buflen, const char *path) {
+//	u16 rem = buflen, copied = 0;
+//	ssize_t ret;
+//	int fd;
+//
+//	fd = open(path, O_RDONLY);
+//	if (fd == -1) {
+//		printf("Unable to open input file %s\n", path);
+//		return -1;
+//	}
+//
+//	while (rem) {
+//		ret = (int)read(fd, buf + copied, rem);
+//		if (ret <= 0) {
+//			break;
+//		} else {
+//			rem -= (u16)ret;
+//			copied += (u16)ret;
+//		}
+//	}
+//
+//	close(fd);
+//
+//	return (copied == buflen) ? 0 : -1;
+	for (u16 i = 0; i < buflen; i++) {
+		buf[i] = i + (int)(*path);
 	}
 
-	while (rem) {
-		ret = (int)read(fd, buf + copied, rem);
-		if (ret <= 0) {
-			break;
-		} else {
-			rem -= (u16)ret;
-			copied += (u16)ret;
-		}
-	}
-
-	close(fd);
-
-	return (copied == buflen) ? 0 : -1;
+  return 0;
 }
 
 int get_random(unsigned char *buf, u16 len)

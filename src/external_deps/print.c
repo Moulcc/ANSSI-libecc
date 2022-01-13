@@ -16,15 +16,15 @@
 #include "print.h"
 
 #ifdef WITH_STDLIB
-#include <stdio.h>
-#include <stdarg.h>
+//#include <stdio.h>
+//#include <stdarg.h>
 void ext_printf(const char *format, ...)
 {
-	va_list arglist;
+//	va_list arglist;
 
-	va_start(arglist, format);
-	vprintf(format, arglist);
-	va_end(arglist);
+//	va_start(arglist, format);
+//	vprintf(format, arglist);
+//	va_end(arglist);
 }
 #else
 #error "print.c: you have to implement ext_printf"

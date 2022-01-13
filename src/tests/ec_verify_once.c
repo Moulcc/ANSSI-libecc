@@ -1,5 +1,5 @@
 #include "../libsig.h"
-//#include "ckb_syscalls.h"
+#include "ckb_syscalls.h"
 
 #ifdef WITH_STDLIB
 #include <string.h>
