@@ -2,6 +2,12 @@
 
 # libecc project
 
+## What's different from ANSSI repo
+1. This repo is for secp256r1 signature verification in CKB.
+2. All unrelated compile options in Makefile have been annotated.
+3. Related performance tuning of secp256r1 would be in this repo.
+4. A single verification test has been added.
+
 ## Copyright and license
 Copyright (C) 2017
 
