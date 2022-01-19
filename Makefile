@@ -4,7 +4,7 @@ TARGET := riscv64-unknown-linux-gnu
 CC := $(TARGET)-gcc
 LD := $(TARGET)-gcc
 OBJCOPY := $(TARGET)-objcopy
-CFLAGS := -fPIC -O3 -nostdinc -nostdlib -nostartfiles -fvisibility=hidden -I ../ckb-c-stdlib -I ../ckb-c-stdlib/libc -I c -I build -Wall -Werror -Wno-nonnull -Wno-nonnull-compare -Wno-unused-function -g
+CFLAGS := -fPIC -O3 -nostdinc -nostdlib -nostartfiles -fvisibility=hidden -I deps/ckb-c-stdlib -I deps/ckb-c-stdlib/libc -I c -I build -Wall -Werror -Wno-nonnull -Wno-nonnull-compare -Wno-unused-function -g
 LDFLAGS := -Wl,-static -fdata-sections -ffunction-sections -Wl,--gc-sections
 
 CKB_VM_CLI := ckb-vm-b-cli
@@ -29,7 +29,10 @@ endif
 
 # Executables to build
 # TESTS_EXEC = $(BUILD_DIR)/ec_self_tests $(BUILD_DIR)/ec_utils
-TESTS_EXEC = $(BUILD_DIR)/ec_verify_once
+TESTS_EXEC = $(BUILD_DIR)/ec_secp256r1_core.o $(BUILD_DIR)/ec_secp256r1_core
+# TESTS_EXEC = $(BUILD_DIR)/ec_secp256r1_core.o
+# TESTS_EXEC = $(BUILD_DIR)/server.o $(BUILD_DIR)/ec_secp256r1_core
+# TESTS_EXEC = $(BUILD_DIR)/server.o
 # We also compile executables with dynamic linking if asked to
 ifeq ($(WITH_DYNAMIC_LIBS),1)
 TESTS_EXEC += $(BUILD_DIR)/ec_self_tests_dyn $(BUILD_DIR)/ec_utils_dyn
@@ -233,11 +236,25 @@ TESTS_OBJECTS_UTILS_DEPS = $(patsubst %.c, %.d, $(TESTS_OBJECTS_UTILS_SRC))
 #	$(CC) $(BIN_CFLAGS) $(BIN_LDFLAGS) -DWITH_STDLIB  $^ -o $@
 
 TESTS_OBJECTS_VERIFY_SRC = src/tests/ec_verify_once.c
+TESTS_OBJECTS_VERIFY_NEW = src/tests/ec_secp256r1_core.c
+TESTS_OBJECTS_VERIFY_NEW_H = src/tests/ec_secp256r1_core.h
+TESTS_LIB_VERIFY_NEW = build/ec_secp256r1_core.o
+TESTS_LIB_SERVER = build/server.o
+TESTS_OBJECTS_TEMP = src/tests/temp.c
 #TESTS_OBJECTS_VERIFT = $(patsubst %.c, %.o, $(TESTS_OBJECTS_VERIFY_SRC))
 #TESTS_OBJECTS_VERIFY_DEPS = $(patsubst %.c, %.d, $(TESTS_OBJECTS_VERIFY_SRC))
 
 $(BUILD_DIR)/ec_verify_once: $(TESTS_OBJECTS_VERIFY_SRC) $(EXT_DEPS_OBJECTS) $(LIBSIGN)
 	$(CC) $(CFLAGS) $(BIN_LDFLAGS)  $^ -o $@
+
+$(BUILD_DIR)/ec_secp256r1_core.o: $(TESTS_OBJECTS_VERIFY_NEW)
+	$(CC) -I ./ -c $(CFLAGS) $(BIN_LDFLAGS) -DCKB_DECLARATION_ONLY $^ -o $@
+
+$(BUILD_DIR)/server.o: src/tests/server.c
+	$(CC) -c $(CFLAGS) -DCKB_DECLARATION_ONLY $^ -o $@
+
+$(BUILD_DIR)/ec_secp256r1_core: $(TESTS_OBJECTS_TEMP) $(TESTS_LIB_VERIFY_NEW) $(EXT_DEPS_OBJECTS) $(LIBSIGN)
+	$(CC) $(CFLAGS) $(BIN_LDFLAGS) $^ -o $@
 
 # If the user asked for dynamic libraries, compile versions of our binaries against them
 ifeq ($(WITH_DYNAMIC_LIBS),1)
