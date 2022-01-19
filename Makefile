@@ -239,7 +239,6 @@ TESTS_OBJECTS_VERIFY_SRC = src/tests/ec_verify_once.c
 TESTS_OBJECTS_VERIFY_NEW = src/tests/ec_secp256r1_core.c
 TESTS_OBJECTS_VERIFY_NEW_H = src/tests/ec_secp256r1_core.h
 TESTS_LIB_VERIFY_NEW = build/ec_secp256r1_core.o
-TESTS_LIB_SERVER = build/server.o
 TESTS_OBJECTS_TEMP = src/tests/temp.c
 #TESTS_OBJECTS_VERIFT = $(patsubst %.c, %.o, $(TESTS_OBJECTS_VERIFY_SRC))
 #TESTS_OBJECTS_VERIFY_DEPS = $(patsubst %.c, %.d, $(TESTS_OBJECTS_VERIFY_SRC))
@@ -249,9 +248,6 @@ $(BUILD_DIR)/ec_verify_once: $(TESTS_OBJECTS_VERIFY_SRC) $(EXT_DEPS_OBJECTS) $(L
 
 $(BUILD_DIR)/ec_secp256r1_core.o: $(TESTS_OBJECTS_VERIFY_NEW)
 	$(CC) -I ./ -c $(CFLAGS) $(BIN_LDFLAGS) -DCKB_DECLARATION_ONLY $^ -o $@
-
-$(BUILD_DIR)/server.o: src/tests/server.c
-	$(CC) -c $(CFLAGS) -DCKB_DECLARATION_ONLY $^ -o $@
 
 $(BUILD_DIR)/ec_secp256r1_core: $(TESTS_OBJECTS_TEMP) $(TESTS_LIB_VERIFY_NEW) $(EXT_DEPS_OBJECTS) $(LIBSIGN)
 	$(CC) $(CFLAGS) $(BIN_LDFLAGS) $^ -o $@
